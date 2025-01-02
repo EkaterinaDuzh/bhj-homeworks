@@ -1,34 +1,29 @@
-document.addEventListener("click", showTip)
-document.addEventListener("mouseout", hideTip)
+'use strict';
 
-function showTip(event) {
-    let tar = event.target;
-    let tarRect = tar.getBoundingClientRect() 
-    let x, y;                                  
-    x = tarRect.x      
-    y = tarRect.y 
-   
-    let tip = document.createElement("div")
-    tip.className = "tooltip"               
-    y = tarRect.y - tip.offsetHeight + 20
-    x = tarRect.x - tip.offsetHeight + 100
-    tip.style.left = x + 'px'                  
-    tip.style.top = y + 'px'               
-   
-    document.body.append(tip)             
-         
-    if (Array.from(tar.classList).includes('has-tooltip')){
-        tip.textContent = tar.title                
-        tip.classList.add('tooltip_active');
-    }
-    event.preventDefault()
-}
+const tooltips = Array.from(document.querySelectorAll('.has-tooltip'));
 
-function hideTip() {
-    let tip = document.querySelectorAll('.tooltip')
-    for ( let i of (Array.from(tip))){
-        if (i != null) { 
-           i.classList.remove('tooltip_active')
-        }   
-    }  
-}
+tooltips.forEach(tooltip => {
+	const elem = document.createElement('div');
+	elem.textContent = tooltip.title;
+
+	tooltip.addEventListener('click', (e) => {
+		e.preventDefault();
+		elem.classList.add('tooltip');
+		tooltip.insertAdjacentElement('beforeBegin', elem);
+		elem.style.position = 'absolute';
+		elem.style.left = `${tooltip.getBoundingClientRect().left}px`;
+		elem.style.top = `${tooltip.getBoundingClientRect().bottom}px`;
+
+		const elems = Array.from(document.querySelectorAll('.tooltip_active'));
+		const findElem = elems.find(elem => elem.classList.contains('tooltip_active'));
+
+		if (findElem === undefined) {
+			elem.classList.add('tooltip_active');
+		} else {
+			if (findElem !== elem) {
+				elem.classList.add('tooltip_active');
+			}
+			findElem.classList.remove('tooltip_active');
+		}
+	})
+});
