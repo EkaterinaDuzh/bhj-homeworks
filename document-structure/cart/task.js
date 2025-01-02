@@ -1,34 +1,56 @@
-const plus = document.getElementsByClassName('product__quantity-control product__quantity-control_inc')
-const minus = document.getElementsByClassName('product__quantity-control product__quantity-control_dec')
-const quantity = document.getElementsByClassName('product__quantity-value')
-const add = document.getElementsByClassName('product__add')
-const products = document.getElementsByClassName('product')
-const images = document.getElementsByClassName('product__image')
-const cart = document.querySelector('.cart__products')
-let arryId = []
-for (let i = 0; i < plus.length; i++) {
-	plus[i].onclick = () => {
-		quantity[i].textContent = Number(quantity[i].textContent) + 1
-	}
-	minus[i].onclick = () => {
-		if (quantity[i].textContent > 1) {
-			quantity[i].textContent = Number(quantity[i].textContent) - 1
-		}
-	}
-	add[i].onclick = () => {
-		const cartCount = document.querySelectorAll('.cart__product-count')
-		const productInCart = document.querySelectorAll('.cart__product')
-		console.log(products[i].getAttribute('data-id'))
+'use strict';
 
-		if (arryId.includes(products[i].getAttribute('data-id'))) {
-			cartCount[i].textContent = Number(cartCount[i].textContent) + Number(quantity[i].textContent)
-		} else {
-			cart.innerHTML +=
-				`<div class="cart__product" data-id="${products[i].getAttribute('data-id')}">
-           <img class="cart__product-image" src="${images[i].getAttribute('src')}">
-           <div class="cart__product-count">${quantity[i].textContent}</div>
-       </div>`
+const cart = document.querySelector('.cart__products');
+const valueButtons = document.querySelectorAll('.product__quantity-control');
+const addButtons = document.querySelectorAll('.product__add');
+
+
+for (let item of valueButtons) {
+	item.addEventListener('click', changeValue);
+}
+
+for (let item of addButtons) {
+	item.addEventListener('click', addToCart);
+}
+
+function changeValue(event) {
+
+	let value = event.target.parentNode.querySelector('.product__quantity-value');
+	let count = +value.innerText;
+
+	if (event.target.classList.contains('product__quantity-control_inc')) {
+		value.innerText = Number(value.innerText) + 1;
+	} else {
+		if (count > 1) {
+			value.innerText = Number(value.innerText) - 1;
 		}
-		arryId.push(products[i].getAttribute('data-id'))
 	}
+}
+
+function addToCart(event) {
+
+	const product = event.target.closest('.product');
+	const id = product.dataset.id;
+	const countFromProduct = +event.target.parentNode.querySelector('.product__quantity-value').innerText;
+
+	for (let item of cart.children) {
+
+		if (item.dataset.id === id) {
+			let productCount = item.querySelector('.cart__product-count');
+			let total = +productCount.innerText;
+			productCount.innerText = total + countFromProduct;
+
+			return false;
+		}
+	}
+
+	const productImg = product.querySelector('.product__image').src;
+	const count = product.querySelector('.product__quantity-value').innerText;
+
+	const productToCart = `<div class="cart__product" data-id="${id}">
+                                <img class="cart__product-image" src="${productImg}">
+                                <div class="cart__product-count">${count}</div>
+                            </div>`;
+
+	cart.insertAdjacentHTML('beforeend', productToCart);
 }
