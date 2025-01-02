@@ -1,26 +1,42 @@
-const text = document.getElementById('task__input')
-const task = document.getElementById('tasks__list')
-const remove = document.querySelectorAll('.task__remove')
+'use strict';
 
-text.addEventListener('keydown', (e) => {
-	if (e.key == 'Enter' && text.value.length != 0) {
-		task.innerHTML +=
-			`<div class="task">
+const tasksInput = document.getElementById(`task__input`);
+const tasksAddButton = document.getElementById(`tasks__add`);
+const tasksList = document.getElementById(`tasks__list`);
+let taskRemoveButton;
+let tasks;
+
+function taskAdd() {
+	if (tasksInput.value) {
+		event.preventDefault();
+
+		tasksList.insertAdjacentHTML(`beforeEnd`, `
+            <div class="task">
             <div class="task__title">
-              ${text.value}
+                ${tasksInput.value}
             </div>
             <a href="#" class="task__remove">&times;</a>
-          </div>`
-		text.value = null
-		e.preventDefault()
+            </div>`);
+
+		tasksInput.value = '';
+
+		taskRemoveButton = document.getElementsByClassName(`task__remove`);
+		tasks = document.getElementsByClassName(`task`);
 	}
-})
+}
 
-document.addEventListener('click', delTask)
+tasksAddButton.addEventListener(`click`, taskAdd);
 
-function delTask(event) {
-	let tar = event.target
-	if (Array.from(tar.classList).includes('task__remove')) {
-		tar.parentElement.remove()
+tasksInput.addEventListener(`keydown`, event => {
+	if (event.keyCode === 13) {
+		taskAdd();
+	}
+});
+
+tasksList.onclick = function(event) {
+	let target = event.target;
+
+	if (target.classList.contains(`task__remove`)) {
+		target.closest(`.task`).remove();
 	}
 }
