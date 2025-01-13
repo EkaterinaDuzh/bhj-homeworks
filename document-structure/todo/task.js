@@ -1,14 +1,14 @@
 'use strict';
 
-const tasksInput = document.getElementById(`task__input`);
-const tasksAddButton = document.getElementById(`tasks__add`);
-const tasksList = document.getElementById(`tasks__list`);
+const tasksInput = document.getElementById('task__input');
+const tasksAddButton = document.getElementById('tasks__add');
+const tasksList = document.getElementById('tasks__list');
 let taskRemoveButton;
 let tasks;
 
-function taskAdd() {
-	if (tasksInput.value) {
-		event.preventDefault();
+function taskAdd(event) {
+	event.preventDefault();
+	if (tasksInput.value.trim()) {
 
 		tasksList.insertAdjacentHTML(`beforeEnd`, `
             <div class="task">
@@ -27,16 +27,10 @@ function taskAdd() {
 
 tasksAddButton.addEventListener(`click`, taskAdd);
 
-tasksInput.addEventListener(`keydown`, event => {
-	if (event.keyCode === 13) {
-		taskAdd();
-	}
-});
-
 tasksList.onclick = function(event) {
 	let target = event.target;
 
-	if (target.classList.contains(`task__remove`)) {
-		target.closest(`.task`).remove();
+	if (target.classList.contains('task__remove')) {
+		target.closest('.task').remove();
 	}
 }
